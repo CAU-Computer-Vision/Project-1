@@ -2,29 +2,28 @@ import cv2
 import numpy as np
 
 #이미지 읽어오기
-img = cv2.imread("1st.jpg", cv2.INTER_AREA)
-img = cv2.resize(img, dsize=(640, 480), interpolation=cv2.INTER_AREA)
+img = cv2.imread("1st.jpg")
+img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+img = cv2.resize(img, dsize=(640, 480))
 
-#ROI
+
+#코너 patch 지정 및 저장
 for i in range(4):
     x,y,w,h = cv2.selectROI('img', img, False)
     if w and h:
         roi = img[y:y+h, x:x+w]
-        cv2.imwrite('./'+'1st_corner'+str(i)+'.jpg', roi)   # ROI 영역만 파일로 저장
+        cv2.imwrite('./'+'1st_corner'+str(i)+'.jpg', roi)
 
-#아래 코드 한 줄을 통해 가우시안 블러를 미리 넣어줄 수 있습니다.
-img = cv2.GaussianBlur(img, (11, 11), 0)
 
-#소벨, 라플라스, 캐니 필터를 적용시킵니다.
-#sobelx = cv2.Sobel(img, cv2.CV_64F, 1, 0)
-#sobely = cv2.Sobel(img, cv2.CV_64F, 0, 1)
-laplacian = cv2.Laplacian(img, cv2.CV_64F, ksize=5)
+#Blurring and Computing Gradient
+img = cv2.GaussianBlur(img, (5, 5), 0)
+img = np.float32(img)/255.0
 
-#여러 필터 처리된 결과물을 보여줍니다.
-cv2.imshow("Image", img)
-#cv2.imshow("Sobelx", sobelx)
-#cv2.imshow("Sobely", sobely)
-cv2.imshow("Laplacian", laplacian)
+gx = cv2.Sobel(img, cv2.CV_32F, 1, 0, ksize=1)
+gy = cv2.Sobel(img, cv2.CV_32F, 0, 1, ksize=1)
+mag, angle = cv2.cartToPolar(gx, gy, angleInDegrees=True)
+
 
 cv2.waitKey(0)
 cv2.destroyAllWindows()
+ 
