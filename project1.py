@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 # Mouse Click Event(Drawing rectangle and appending coordinates clicked to list)
@@ -36,18 +37,29 @@ def compute_gradient(img):
     gx = cv2.Sobel(img, cv2.CV_32F, 1, 0, ksize=1)
     gy = cv2.Sobel(img, cv2.CV_32F, 0, 1, ksize=1)
     mag, angle = cv2.cartToPolar(gx, gy, angleInDegrees=True)
-    print('angle')
-    print(angle)
-    merge_by_degree(angle)
+
+    merged_arr = merge_by_degree(angle)
+    x_line = [i * unit_of_degree for i in range(360 // unit_of_degree)]
+    plt.xticks(x_line)
+    plt.hist(merged_arr, x_line)
+    plt.show()
 
 
 def merge_by_degree(angle):
+    global unit_of_degree
+    merged_angle = []
+    angle = angle // unit_of_degree * unit_of_degree
+    for angle_i in angle:
+        for a in angle_i:
+            merged_angle.append(a)
+    return merged_angle
+
+
+def get_degree_arr(angle):
     degree_arr = [0 for _ in range(360 // unit_of_degree)]
     for angle_i in angle:
         for a in angle_i:
             degree_arr[int(a) // unit_of_degree] += 1
-    print('degree_arr')
-    print(degree_arr)
     return degree_arr
 
 
