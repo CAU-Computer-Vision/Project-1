@@ -6,25 +6,21 @@ import matplotlib.pyplot as plt
 # Mouse Click Event(Drawing rectangle and appending coordinates clicked to list)
 def on_click_1st(event, x, y, flags, param):
     if event == cv2.EVENT_LBUTTONDOWN:
-        points1.append([x - rect_side // 2, y - rect_side // 2])
-        idx = len(points1) - 1
-        x = points1[idx][0]
-        y = points1[idx][1]
+        if param == 1:
+            arr = points1
+            img = img1
+        else:
+            arr = points2
+            img = img2
+        arr.append([x - rect_side // 2, y - rect_side // 2])
+        idx = len(arr) - 1
+        x = arr[idx][0]
+        y = arr[idx][1]
 
-        roi = img1[y: y + rect_side, x: x + rect_side]
+        roi = img[y: y + rect_side, x: x + rect_side]
         compute_gradient(roi)
-        cv2.rectangle(img1, (x, y), (x + rect_side, y + rect_side), 2)
-        cv2.imshow('img1', img1)
-
-
-def on_click_2nd(event, x, y, flags, param):
-    if event == cv2.EVENT_LBUTTONDOWN:
-        points2.append([x - rect_side // 2, y - rect_side // 2])
-        idx = len(points2) - 1
-        cv2.rectangle(img2, (points2[idx][0], points2[idx][1]),
-                      (points2[idx][0] + rect_side, points2[idx][1] + rect_side), 2)
-        cv2.imshow('img2', img2)
-        print(points2)
+        cv2.rectangle(img, (x, y), (x + rect_side, y + rect_side), 2)
+        cv2.imshow(str(param), img)
 
 
 def compute_gradient(img):
@@ -74,13 +70,13 @@ img1 = cv2.resize(img1, dsize=(640, 480))
 img2 = cv2.imread('2nd.jpg')
 img2 = cv2.resize(img2, dsize=(640, 480))
 
-cv2.namedWindow('img1')
-cv2.setMouseCallback('img1', on_click_1st)
-cv2.namedWindow('img2')
-cv2.setMouseCallback('img2', on_click_2nd)
+cv2.namedWindow('1')
+cv2.setMouseCallback('1', on_click_1st, 1)
+cv2.namedWindow('2')
+cv2.setMouseCallback('2', on_click_1st, 2)
 
-cv2.imshow('img1', img1)
-cv2.imshow('img2', img2)
+cv2.imshow('1', img1)
+cv2.imshow('2', img2)
 
 cv2.waitKey(0)
 cv2.destroyAllWindows()
