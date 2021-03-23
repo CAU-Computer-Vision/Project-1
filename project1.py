@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 
 # Mouse Click Event(Drawing rectangle and appending coordinates clicked to list)
-def on_click_1st(event, x, y, flags, param):
+def on_click(event, x, y, flags, param):
     if event == cv2.EVENT_LBUTTONDOWN:
         if param == 1:
             arr = points1
@@ -71,9 +71,9 @@ img2 = cv2.imread('2nd.jpg')
 img2 = cv2.resize(img2, dsize=(640, 480))
 
 cv2.namedWindow('1')
-cv2.setMouseCallback('1', on_click_1st, 1)
+cv2.setMouseCallback('1', on_click, 1)
 cv2.namedWindow('2')
-cv2.setMouseCallback('2', on_click_1st, 2)
+cv2.setMouseCallback('2', on_click, 2)
 
 cv2.imshow('1', img1)
 cv2.imshow('2', img2)
