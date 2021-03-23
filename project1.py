@@ -6,12 +6,20 @@ import matplotlib.pyplot as plt
 # Mouse Click Event(Drawing rectangle and appending coordinates clicked to list)
 def on_click(event, x, y, flags, param):
     if event == cv2.EVENT_LBUTTONDOWN:
+        global count_1, count_2
         if param == 1:
+            if count_1 >= 4:
+                return
+            count_1 += 1
             arr = points1
             img = img1
         else:
+            if count_2 >= 4:
+                return
+            count_2 += 1
             arr = points2
             img = img2
+
         arr.append([x - rect_side // 2, y - rect_side // 2])
         idx = len(arr) - 1
         x = arr[idx][0]
@@ -21,6 +29,9 @@ def on_click(event, x, y, flags, param):
         compute_gradient(roi)
         cv2.rectangle(img, (x, y), (x + rect_side, y + rect_side), 2)
         cv2.imshow(str(param), img)
+        if count_1 + count_2 == 8:
+            # TODO: Histogram Distance 구하는 함수 실행
+            pass
 
 
 def compute_gradient(img):
@@ -63,6 +74,8 @@ points1 = list()
 points2 = list()
 rect_side = 16
 unit_of_degree = 30
+count_1 = 0
+count_2 = 0
 
 # Read Image
 img1 = cv2.imread('1st.jpg')
