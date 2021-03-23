@@ -38,11 +38,23 @@ def compute_gradient(img):
     mag, angle = cv2.cartToPolar(gx, gy, angleInDegrees=True)
     print('angle')
     print(angle)
+    merge_by_degree(angle)
+
+
+def merge_by_degree(angle):
+    degree_arr = [0 for _ in range(360 // unit_of_degree)]
+    for angle_i in angle:
+        for a in angle_i:
+            degree_arr[int(a) // unit_of_degree] += 1
+    print('degree_arr')
+    print(degree_arr)
+    return degree_arr
 
 
 points1 = list()
 points2 = list()
 rect_side = 16
+unit_of_degree = 30
 
 # Read Image
 img1 = cv2.imread('1st.jpg')
