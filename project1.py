@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
-
+from copy import deepcopy
 
 # Mouse Click Event(Drawing rectangle and appending coordinates clicked to list)
 def on_click(event, x, y, flags, param):
@@ -11,27 +11,30 @@ def on_click(event, x, y, flags, param):
             if count_1 >= 4:
                 return
             count_1 += 1
-            arr = points1
+            point_arr = points1
+            degree_arr = degrees1
             img = img1
         else:
             if count_2 >= 4:
                 return
             count_2 += 1
-            arr = points2
+            point_arr = points2
+            degree_arr = degrees2
             img = img2
 
-        arr.append([x - rect_side // 2, y - rect_side // 2])
-        idx = len(arr) - 1
-        x = arr[idx][0]
-        y = arr[idx][1]
+        point_arr.append([x - rect_side // 2, y - rect_side // 2])
+        print(point_arr)
+        idx = len(point_arr) - 1
+        x = point_arr[idx][0]
+        y = point_arr[idx][1]
 
         roi = img[y: y + rect_side, x: x + rect_side]
-        compute_gradient(roi)
+        degree_arr.append(compute_gradient(roi))
         cv2.rectangle(img, (x, y), (x + rect_side, y + rect_side), 2)
         cv2.imshow(str(param), img)
         if count_1 + count_2 == 8:
-            # TODO: Histogram Distance 구하는 함수 실행
-            pass
+            store_point3()
+            show_addedimg()
 
 
 def compute_gradient(img):
@@ -50,6 +53,7 @@ def compute_gradient(img):
     plt.xticks(x_line)
     plt.hist(merged_arr, x_line)
     plt.show()
+    return merged_arr
 
 
 def merge_by_degree(angle):
@@ -70,8 +74,61 @@ def get_degree_arr(angle):
     return degree_arr
 
 
+# MSE 함수 정의
+def mean_squared_error(y,t):
+    return ((y-t)**2).mean(axis=None)
+
+# 유사도 가장 높은기 배열 찾기
+def find_mini(answer,list):
+    mini = float('inf')
+    mini_total = float('inf')
+    np_answer = np.array(answer)
+    np_list = np.array(list)
+
+    for i in range(4):
+        for j in range(12):
+            if mean_squared_error(np_answer,np_list[i]) < mini:
+                mini = mean_squared_error(np_answer,np_list[i])
+            np_list[i] = np.roll(np_list[i],1)
+
+        if mini < mini_total:
+            mini_total = mini
+            result = i
+    return result
+
+
+
+# img1의 각 꼭짓점별 img2의 최소거리 좌표 저장
+def store_point3():
+    for k in range(4):
+        answer = degrees1[k]
+        min_index = find_mini(answer,degrees2)
+        temp = deepcopy(points2[min_index])
+        points3.append((temp))
+
+
+    #사진 합쳤을때를 위해 x 좌표를 img1 width 만큼 늘려줌
+    for m in range(4):
+        points3[m][0] = points3[m][0] + 640
+
+
+
+# img1과 img2 합치기
+def show_addedimg():
+    added_img = cv2.hconcat([img1, img2])
+    for i in range(4):
+        cv2.line(added_img,tuple(points1[i]),tuple(points3[i]), (0, 0, 255), 2)
+    cv2.imshow('added', added_img)
+
+
+
 points1 = list()
 points2 = list()
+points3 = list()
+degrees1 = list()
+degrees2 = list()
+
+
 rect_side = 16
 unit_of_degree = 30
 count_1 = 0
