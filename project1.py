@@ -86,19 +86,15 @@ def mean_squared_error(y, t):
 # 유사도 가장 높은기 배열 찾기
 def find_mini(answer, list):
     mini = float('inf')
-    mini_total = float('inf')
     np_answer = np.array(answer)
     np_list = np.array(list)
 
     for i in range(4):
-        for j in range(360 // unit_of_degree):
-            if mean_squared_error(np_answer, np_list[i]) < mini:
-                mini = mean_squared_error(np_answer, np_list[i])
-            np_list[i] = np.roll(np_list[i], 1)
-
-        if mini < mini_total:
-            mini_total = mini
+        distance = mean_squared_error(np_answer, np_list[i])
+        if distance < mini:
+            mini = distance
             result = i
+
     return result
 
 
