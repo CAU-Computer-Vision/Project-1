@@ -69,7 +69,6 @@ def merge_by_degree(angle):
     for angle_i in angle:
         for a in angle_i:
             merged_angle.append(a)
-    print("merged : ", len(merged_angle))
     return merged_angle
 
 
@@ -109,7 +108,6 @@ def find_mini(answer, list):
 def store_point3():
     for k in range(4):
         answer = degrees1[k]
-        print("answer : ", len(answer))
         min_index = find_mini(answer, degrees2)
         temp = deepcopy(c_points2[min_index])
         c_points2_right.append(temp)
