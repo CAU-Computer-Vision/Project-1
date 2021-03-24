@@ -104,6 +104,8 @@ def find_mini(answer, list):
 
 # img1의 각 꼭짓점별 img2의 최소거리 좌표 저장
 def store_point3():
+    if len(degrees1)<4:
+        return
     for k in range(4):
         answer = degrees1[k]
         min_index = find_mini(answer, degrees2)
@@ -117,6 +119,8 @@ def store_point3():
 
 # img1과 img2 합치기
 def show_addedimg():
+    if len(c_points1)<4 or len(c_points2_right)<4:
+        return
     added_img = cv2.hconcat([img1, img2])
     for i in range(4):
         cv2.line(added_img, tuple(c_points1[i]), tuple(c_points2_right[i]), (0, 0, 255), 2)
