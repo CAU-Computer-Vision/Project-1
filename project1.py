@@ -46,8 +46,6 @@ def compute_gradient(img):
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     img = cv2.GaussianBlur(img, (11, 11), 0)
     img = np.float32(img) / 255.0
-    tmp = cv2.resize(img, dsize=(500, 500), interpolation=cv2.INTER_AREA)
-    cv2.imshow('img', tmp)
 
     gx = cv2.Sobel(img, cv2.CV_32F, 1, 0, ksize=1)
     gy = cv2.Sobel(img, cv2.CV_32F, 0, 1, ksize=1)
