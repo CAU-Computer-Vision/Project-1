@@ -91,7 +91,7 @@ def find_mini(answer, list):
     np_list = np.array(list)
 
     for i in range(4):
-        for j in range(12):
+        for j in range(360 // unit_of_degree):
             if mean_squared_error(np_answer, np_list[i]) < mini:
                 mini = mean_squared_error(np_answer, np_list[i])
             np_list[i] = np.roll(np_list[i], 1)
