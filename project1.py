@@ -50,6 +50,7 @@ def compute_gradient(img):
 
     merged_arr = merge_by_degree(angle)
     x_line = [i * unit_of_degree for i in range(360 // unit_of_degree)]
+    plt.figure()
     plt.xticks(x_line)
     plt.hist(merged_arr, x_line)
     plt.show()
