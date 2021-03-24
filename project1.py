@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from copy import deepcopy
 
+
 # Mouse Click Event(Drawing rectangle and appending coordinates clicked to list)
 def on_click(event, x, y, flags, param):
     if event == cv2.EVENT_LBUTTONDOWN:
@@ -11,22 +12,25 @@ def on_click(event, x, y, flags, param):
             if count_1 >= 4:
                 return
             count_1 += 1
-            point_arr = points1
+            s_point_arr = s_points1
+            c_point_arr = c_points1
             degree_arr = degrees1
             img = img1
         else:
             if count_2 >= 4:
                 return
             count_2 += 1
-            point_arr = points2
+            s_point_arr = s_points2
+            c_point_arr = c_points2
             degree_arr = degrees2
             img = img2
 
-        point_arr.append([x - rect_side // 2, y - rect_side // 2])
-        print(point_arr)
-        idx = len(point_arr) - 1
-        x = point_arr[idx][0]
-        y = point_arr[idx][1]
+        s_point_arr.append([x - rect_side // 2, y - rect_side // 2])
+        c_point_arr.append([x, y])
+
+        idx = len(s_point_arr) - 1
+        x = s_point_arr[idx][0]
+        y = s_point_arr[idx][1]
 
         roi = img[y: y + rect_side, x: x + rect_side]
         degree_arr.append(compute_gradient(roi))
@@ -76,11 +80,12 @@ def get_degree_arr(angle):
 
 
 # MSE 함수 정의
-def mean_squared_error(y,t):
-    return ((y-t)**2).mean(axis=None)
+def mean_squared_error(y, t):
+    return ((y - t) ** 2).mean(axis=None)
+
 
 # 유사도 가장 높은기 배열 찾기
-def find_mini(answer,list):
+def find_mini(answer, list):
     mini = float('inf')
     mini_total = float('inf')
     np_answer = np.array(answer)
@@ -88,9 +93,9 @@ def find_mini(answer,list):
 
     for i in range(4):
         for j in range(12):
-            if mean_squared_error(np_answer,np_list[i]) < mini:
-                mini = mean_squared_error(np_answer,np_list[i])
-            np_list[i] = np.roll(np_list[i],1)
+            if mean_squared_error(np_answer, np_list[i]) < mini:
+                mini = mean_squared_error(np_answer, np_list[i])
+            np_list[i] = np.roll(np_list[i], 1)
 
         if mini < mini_total:
             mini_total = mini
@@ -98,37 +103,35 @@ def find_mini(answer,list):
     return result
 
 
-
 # img1의 각 꼭짓점별 img2의 최소거리 좌표 저장
 def store_point3():
     for k in range(4):
         answer = degrees1[k]
-        min_index = find_mini(answer,degrees2)
-        temp = deepcopy(points2[min_index])
-        points3.append((temp))
+        min_index = find_mini(answer, degrees2)
+        temp = deepcopy(c_points2[min_index])
+        c_points2_right.append(temp)
 
-
-    #사진 합쳤을때를 위해 x 좌표를 img1 width 만큼 늘려줌
+    # 사진 합쳤을때를 위해 x 좌표를 img1 width 만큼 늘려줌
     for m in range(4):
-        points3[m][0] = points3[m][0] + 640
-
+        c_points2_right[m][0] = c_points2_right[m][0] + 640
 
 
 # img1과 img2 합치기
 def show_addedimg():
     added_img = cv2.hconcat([img1, img2])
     for i in range(4):
-        cv2.line(added_img,tuple(points1[i]),tuple(points3[i]), (0, 0, 255), 2)
+        cv2.line(added_img, tuple(c_points1[i]), tuple(c_points2_right[i]), (0, 0, 255), 2)
     cv2.imshow('added', added_img)
 
 
+s_points1 = list()
+s_points2 = list()
+c_points1 = list()
+c_points2 = list()
+c_points2_right = list()
 
-points1 = list()
-points2 = list()
-points3 = list()
 degrees1 = list()
 degrees2 = list()
-
 
 rect_side = 16
 unit_of_degree = 30
