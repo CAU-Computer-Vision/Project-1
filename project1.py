@@ -32,10 +32,11 @@ def on_click(event, x, y, flags, param):
         x = s_point_arr[idx][0]
         y = s_point_arr[idx][1]
 
-        roi = img[y: y + rect_side, x: x + rect_side]
-        degree_arr.append(compute_gradient(roi))
         cv2.rectangle(img, (x, y), (x + rect_side, y + rect_side), 2)
         cv2.imshow(str(param), img)
+        roi = img[y: y + rect_side, x: x + rect_side]
+        degree_arr.append(compute_gradient(roi))
+        
         if count_1 + count_2 == 8:
             store_point3()
             show_addedimg()
